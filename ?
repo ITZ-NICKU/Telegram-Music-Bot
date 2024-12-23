@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Music Bot Repository</title>
+</head>
+<body>
+    <h1>Telegram Music Bot</h1>
+    <p>This is the source code for a Telegram music bot. Follow the instructions below to set it up.</p>
+    
+    <h2>Files</h2>
+    <ul>
+        <li><a href="#bot.py">bot.py</a></li>
+        <li><a href="#requirements.txt">requirements.txt</a></li>
+        <li><a href="#README.md">README.md</a></li>
+    </ul>
+
+    <h2 id="bot.py">bot.py</h2>
+    <pre>
+import telebot
+from telebot.types import Message
+from youtube_search import YoutubeSearch
+
+API_TOKEN = 'YOUR_BOT_TOKEN'
+
+bot = telebot.TeleBot(API_TOKEN)
+
+@bot.message_handler(commands=['start', 'help'])
+def send_welcome(message: Message):
+    bot.reply_to(message, "Welcome to Music Bot! Use /play [song name] to play music.")
+
+@bot.message_handler(commands=['play'])
+def play_music(message: Message):
+    song_name = message.text[len('/play '):]
+    results = YoutubeSearch(song_name, max_results=1).to_dict()
+    if results:
+        url = f"https://www.youtube.com{results[0]['url_suffix']}"
+        bot.reply_to(message, f"Here is your song: {url}")
+    else:
+        bot.reply_to(message, "Song not found!")
+
+bot.polling()
+    </pre>
+
+    <h2 id="requirements.txt">requirements.txt</h2>
+    <pre>
+python-telegram-bot==20.3
+youtube-search-python==1.6.5
+    </pre>
+
+    <h2 id="README.md">README.md</h2>
+    <pre>
+# Telegram Music Bot
+
+This is a simple Telegram bot for searching and sharing music from YouTube.
+
+## Setup
+1. Clone this repository.
+2. Install dependencies using `pip install -r requirements.txt`.
+3. Replace `YOUR_BOT_TOKEN` in `bot.py` with your Telegram bot token.
+4. Run the bot using `python bot.py`.
+
+## Usage
+- Use `/play [song name]` to search for a song.
+- The bot will reply with a YouTube link to the song.
+    </pre>
+</body>
+</html>
